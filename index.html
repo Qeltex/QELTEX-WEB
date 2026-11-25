@@ -1,10 +1,518 @@
 <!DOCTYPE html>
-<html lang="no">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Q.E.L.T.E.X</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Q.E.L.T.E.X — Thundershield-X Protocol</title>
+  <style>
+    :root {
+      --bg-dark: #030705;
+      --bg-panel: #07110d;
+      --bg-panel-hover: #0b1913;
+      --border-green: #144d35;
+      --neon-green: #22ff88;
+      --neon-cyan: #18e0d0;
+      --text-main: #d8f3e5;
+      --text-muted: #7aa38e;
+      --font-mono: 'Consolas', 'Courier New', monospace;
+      --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      line-height: 1.6;
+      background-image: 
+        radial-gradient(circle at 50% 0%, rgba(34, 255, 136, 0.07) 0%, transparent 50%),
+        linear-gradient(rgba(20, 77, 53, 0.12) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(20, 77, 53, 0.12) 1px, transparent 1px);
+      background-size: 100% 100%, 32px 32px, 32px 32px;
+    }
+
+    /* Top Status Bar */
+    .topbar {
+      border-bottom: 1px solid var(--border-green);
+      background: rgba(3, 7, 5, 0.92);
+      backdrop-filter: blur(8px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .topbar-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 14px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .brand {
+      font-family: var(--font-mono);
+      font-size: 1.15rem;
+      font-weight: bold;
+      letter-spacing: 3px;
+      color: var(--neon-green);
+      text-shadow: 0 0 10px rgba(34, 255, 136, 0.4);
+    }
+
+    .brand span {
+      color: var(--neon-cyan);
+      font-size: 0.85rem;
+      letter-spacing: 1px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 24px;
+      align-items: center;
+    }
+
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: var(--neon-green);
+    }
+
+    /* Container */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* Hero Section */
+    .hero {
+      padding: 72px 0 48px;
+      text-align: center;
+    }
+
+    .protocol-badge {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--neon-cyan);
+      border: 1px solid rgba(24, 224, 208, 0.4);
+      background: rgba(24, 224, 208, 0.06);
+      padding: 6px 14px;
+      border-radius: 3px;
+      letter-spacing: 2px;
+      margin-bottom: 20px;
+      text-transform: uppercase;
+    }
+
+    .hero h1 {
+      font-family: var(--font-mono);
+      font-size: clamp(2.2rem, 5vw, 3.6rem);
+      letter-spacing: 6px;
+      color: var(--neon-green);
+      text-shadow: 0 0 24px rgba(34, 255, 136, 0.35);
+      margin-bottom: 10px;
+    }
+
+    .hero-acronym {
+      font-family: var(--font-mono);
+      color: var(--neon-cyan);
+      font-size: 0.95rem;
+      letter-spacing: 1.5px;
+      margin-bottom: 24px;
+    }
+
+    .hero p {
+      max-width: 740px;
+      margin: 0 auto 36px;
+      color: var(--text-main);
+      font-size: 1.1rem;
+    }
+
+    /* Buttons */
+    .cta-group {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 56px;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--neon-green);
+      color: #020804;
+      font-family: var(--font-mono);
+      font-weight: bold;
+      font-size: 0.95rem;
+      padding: 14px 28px;
+      border-radius: 4px;
+      text-decoration: none;
+      letter-spacing: 1px;
+      box-shadow: 0 0 20px rgba(34, 255, 136, 0.35);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 30px rgba(34, 255, 136, 0.6);
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: transparent;
+      color: var(--neon-cyan);
+      border: 1px solid var(--neon-cyan);
+      font-family: var(--font-mono);
+      font-size: 0.95rem;
+      padding: 14px 26px;
+      border-radius: 4px;
+      text-decoration: none;
+      letter-spacing: 1px;
+      transition: background 0.2s;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(24, 224, 208, 0.1);
+    }
+
+    /* HUD Showcase Image */
+    .hud-frame {
+      border: 1px solid var(--border-green);
+      background: var(--bg-panel);
+      border-radius: 6px;
+      padding: 10px;
+      box-shadow: 0 0 40px rgba(0, 0, 0, 0.8), 0 0 25px rgba(34, 255, 136, 0.1);
+      position: relative;
+    }
+
+    .hud-header {
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      padding: 4px 8px 10px;
+      border-bottom: 1px solid rgba(20, 77, 53, 0.5);
+      margin-bottom: 10px;
+    }
+
+    .hud-header .status-dot {
+      color: var(--neon-green);
+    }
+
+    .hud-frame img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 3px;
+      border: 1px solid #0e3826;
+    }
+
+    /* Section Headings */
+    .section {
+      padding: 64px 0;
+      border-top: 1px solid rgba(20, 77, 53, 0.4);
+    }
+
+    .section-title {
+      font-family: var(--font-mono);
+      font-size: 1.6rem;
+      color: var(--neon-green);
+      letter-spacing: 2px;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+
+    .section-sub {
+      color: var(--text-muted);
+      margin-bottom: 36px;
+      font-size: 1rem;
+    }
+
+    /* Feature Grid */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-green);
+      border-radius: 5px;
+      padding: 24px;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .card:hover {
+      border-color: var(--neon-green);
+      background: var(--bg-panel-hover);
+    }
+
+    .card-tag {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--neon-cyan);
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .card h3 {
+      font-family: var(--font-mono);
+      font-size: 1.1rem;
+      color: var(--text-main);
+      margin-bottom: 10px;
+    }
+
+    .card p {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+    }
+
+    /* Architecture / Folder Tree */
+    .arch-box {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 28px;
+      align-items: start;
+    }
+
+    @media (max-width: 850px) {
+      .arch-box {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .terminal-tree {
+      background: #020504;
+      border: 1px solid var(--border-green);
+      border-radius: 5px;
+      padding: 20px;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: var(--neon-green);
+      overflow-x: auto;
+      line-height: 1.55;
+    }
+
+    .terminal-tree .folder {
+      color: var(--neon-cyan);
+      font-weight: bold;
+    }
+
+    .terminal-tree .comment {
+      color: var(--text-muted);
+    }
+
+    /* Comparison / Prime Box */
+    .prime-banner {
+      background: linear-gradient(135deg, #07140f 0%, #06181a 100%);
+      border: 1px solid var(--neon-cyan);
+      border-radius: 6px;
+      padding: 32px;
+    }
+
+    .prime-banner h3 {
+      font-family: var(--font-mono);
+      color: var(--neon-cyan);
+      font-size: 1.35rem;
+      margin-bottom: 12px;
+      letter-spacing: 1px;
+    }
+
+    .prime-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 14px;
+      margin-top: 20px;
+      list-style: none;
+    }
+
+    .prime-list li {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: var(--text-main);
+      padding-left: 18px;
+      position: relative;
+    }
+
+    .prime-list li::before {
+      content: "▸";
+      color: var(--neon-cyan);
+      position: absolute;
+      left: 0;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border-green);
+      padding: 32px 24px;
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+  </style>
 </head>
 <body>
-  <h1>Q.E.L.T.E.X kommer snart</h1>
+
+  <!-- Top Navigation -->
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">Q.E.L.T.E.X <span>// THUNDERSHIELD-X</span></div>
+      <nav class="nav-links">
+        <a href="#features">Modules</a>
+        <a href="#architecture">Architecture</a>
+        <a href="#prime">Prime Protocol</a>
+        <a href="https://github.com" target="_blank" rel="noopener">GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="protocol-badge">System Release // Basic Edition Open Core</div>
+      <h1>Q.E.L.T.E.X</h1>
+      <div class="hero-acronym">(Quantum Engineered Logic &amp; Tactical Executor X-system)</div>
+      <p>
+        An autonomous Python AI agent and tactical desktop command interface powered by real-time Gemini Native Audio &amp; Vision. Built with a modular open-source core ready for developers to expand and customize.
+      </p>
+
+      <div class="cta-group">
+        <a href="https://github.com/archive/refs/heads/main.zip" class="btn-primary">
+          ⬇ DOWNLOAD BASIC EDITION (.ZIP)
+        </a>
+        <a href="https://github.com" target="_blank" rel="noopener" class="btn-secondary">
+          VIEW SOURCE ON GITHUB
+        </a>
+      </div>
+
+      <!-- Interface Screenshot -->
+      <div class="hud-frame">
+        <div class="hud-header">
+          <span><span class="status-dot">●</span> LIVE INTERFACE PREVIEW — Q.E.L.T.E.X [BASIC]</span>
+          <span>PYQT6 // THREE.JS // GEMINI CORE</span>
+        </div>
+        <img src="qeltex-basic-ui.png" alt="Q.E.L.T.E.X Basic Edition Tactical Command Interface" />
+      </div>
+    </section>
+
+    <section id="features" class="section">
+      <h2 class="section-title">Included in Basic Edition</h2>
+      <p class="section-sub">A complete, self-contained foundation engineered to run locally and scale with your own Python action modules.</p>
+
+      <div class="grid">
+        <div class="card">
+          <span class="card-tag">[AGENT ORCHESTRATOR]</span>
+          <h3>Autonomous Task Engine</h3>
+          <p>Dedicated planner, executor, task queue, and error handler modules translate voice or text instructions into multi-step local execution.</p>
+        </div>
+        <div class="card">
+          <span class="card-tag">[OS &amp; HARDWARE CONTROL]</span>
+          <h3>Deep Windows Integration</h3>
+          <p>Simulate mouse and keyboard input, adjust local system settings, manage files, analyze screen content, and monitor live CPU, RAM, and GPU metrics.</p>
+        </div>
+        <div class="card">
+          <span class="card-tag">[SECURITY &amp; BUDGET]</span>
+          <h3>Thundershield &amp; Token Guard</h3>
+          <p>Built-in local network monitoring shield paired with real-time API token budget tracking to keep resource usage transparent and secure.</p>
+        </div>
+        <div class="card">
+          <span class="card-tag">[DAILY INTELLIGENCE]</span>
+          <h3>Briefings, Web &amp; Media</h3>
+          <p>Includes live web search, weather forecasting, news ticker, morning digests, reminders, email dispatch, and a built-in radio engine.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="architecture" class="section">
+      <h2 class="section-title">Built to Be Extended</h2>
+      <p class="section-sub">Drop new Python scripts directly into the <code>actions/</code> directory to expand Q.E.L.T.E.X with new capabilities.</p>
+
+      <div class="arch-box">
+        <div class="terminal-tree">
+<span class="folder">QELTEX-BASIC-Thundershield-X/</span>
+├── <span class="folder">actions/</span> <span class="comment"># Plug-and-play AI tools</span>
+│   ├── browser_control.py
+│   ├── computer_control.py
+│   ├── network_shield.py
+│   ├── screen_processor.py
+│   ├── system_monitor.py
+│   ├── token_budget_shield.py
+│   └── ... (19 core actions)
+├── <span class="folder">agent/</span> <span class="comment"># Orchestration &amp; recovery</span>
+│   ├── planner.py
+│   ├── executor.py
+│   ├── task_queue.py
+│   └── error_handler.py
+├── <span class="folder">memory/</span> <span class="comment"># Persistent state &amp; logs</span>
+│   ├── memory_manager.py
+│   └── long_term.json
+├── <span class="folder">config/</span> <span class="comment"># API keys &amp; HUD assets</span>
+├── <span class="folder">core/</span> <span class="comment"># System prompt &amp; directives</span>
+├── qeltex_main.py
+├── qeltex_ui.py
+└── qeltex_huds.js
+        </div>
+
+        <div>
+          <div class="card" style="margin-bottom: 20px;">
+            <span class="card-tag">STEP 01 // CLONE OR DOWNLOAD</span>
+            <h3>Quick Local Deployment</h3>
+            <p>Download the ZIP archive or clone the repository from GitHub, install dependencies from <code>requirements.txt</code>, and add your Gemini API key in <code>config/api_keys.json</code>.</p>
+          </div>
+          <div class="card">
+            <span class="card-tag">STEP 02 // CREATE CUSTOM ACTIONS</span>
+            <h3>Modular Plug-and-Play Design</h3>
+            <p>Every capability in Q.E.L.T.E.X is isolated inside <code>actions/</code>. Whether you want to connect local IoT hardware, custom APIs, or automation scripts, the agent architecture is ready out of the box.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="prime" class="section">
+      <div class="prime-banner">
+        <span class="card-tag">FULL-SCALE ARCHITECTURE OVERVIEW</span>
+        <h3>Q.E.L.T.E.X PRIME — THUNDERSHIELD-X PROTOCOL</h3>
+        <p style="color: var(--text-main); max-width: 820px;">
+          The Basic Edition is built on the exact same core engine as the full <strong>Q.E.L.T.E.X Prime</strong> system—demonstrating what can be achieved when expanding the framework with custom hardware, radar, and developer modules:
+        </p>
+        <ul class="prime-list">
+          <li>xComfort, Eaton &amp; Verisure Smart Home Control</li>
+          <li>Multi-Camera Axis Surveillance Matrix</li>
+          <li>Live ADS-B Flight Radar &amp; Aircraft Tracking</li>
+          <li>Autonomous Dev Agent &amp; Android App Compiler</li>
+          <li>Automated Network Scanner &amp; Self-Healing ARP</li>
+          <li>90s Eurodance AI Music Generator &amp; Voice Cloner</li>
+          <li>Real-Time 3D Visualizers &amp; Built-in Arcade Games</li>
+          <li>Smart Appliance, Heat Pump &amp; Garage Telemetry</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    THUNDERSHIELD-X PROTOCOL // Q.E.L.T.E.X SYSTEM ARCHITECTURE — <a href="https://github.com" style="color: var(--neon-green); text-decoration: none;">://github.com</a>
+  </footer>
+
 </body>
 </html>
